@@ -137,6 +137,12 @@ def request_details(request_id):
     req = WebsiteRequest.query.get_or_404(request_id)
     return render_template('details.html', req=req)
 
+@app.cli.command("init-db")
+def init_db():
+    """Initialize the database tables."""
+    db.create_all()
+    print("Database tables created.")
+
 # Run the app
 if __name__ == '__main__':
     # Only runs locally
