@@ -7,12 +7,12 @@ from datetime import datetime
 # Initialize Flask app
 app = Flask(__name__)
 # Set secret key for session management and flash messages
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ## Set folder for file uploads
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Set database URI for SQLAlchemy
-uri = os.environ.get("DATABASE_URL", "sqlite:///requests.db")
+uri = os.environ.get('DATABASE_URL', "sqlite:///requests.db")
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
