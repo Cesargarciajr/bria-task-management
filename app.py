@@ -134,8 +134,7 @@ def request_details(request_id):
 
 # Run the app
 if __name__ == '__main__':
-    # Create database tables if they don't exist
+    # Only runs locally
     with app.app_context():
         db.create_all()
-    # Start Flask development server
     app.run(debug=True)
