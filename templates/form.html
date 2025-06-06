@@ -10,44 +10,51 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/style.css') }}">
 </head>
 <body class="bg-light">
 
 <div class="container py-5">
     <!-- Logo Placeholder -->
     <div class="text-center mb-4">
-        <img src="{{ url_for('static', filename='assets/media/bria-logo.jpg') }}" alt="Association Logo" height="200">
+        <img src="{{ url_for('static', filename='assets/media/bria-logo.jpg') }}" alt="Association Logo" class="bria-logo" height="100" width="200">
     </div>
 
     <div class="card shadow">
+        <!-- Card header with icon -->
         <div class="card-header bg-primary text-white">
             <h4><i class="fa-solid fa-envelope-open-text me-2"></i>Website Update Request</h4>
         </div>
         <div class="card-body">
 
+            {# Flash messages for form submission feedback #}
             {% with messages = get_flashed_messages() %}
               {% if messages %}
                 <div class="alert alert-success">
                     {% for message in messages %}
-                        <div>{{ message }}</div>
+                        <div><i class="fa-solid fa-circle-check me-1"></i>{{ message }}</div>
                     {% endfor %}
                 </div>
               {% endif %}
             {% endwith %}
 
+            <!-- Website request form -->
             <form action="/submit" method="POST" enctype="multipart/form-data">
+                <!-- Name field -->
                 <div class="mb-3">
-                    <label class="form-label">Name:</label>
+                    <label class="form-label"><i class="fa-solid fa-user me-1"></i>Name:</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
 
+                <!-- Email field -->
                 <div class="mb-3">
-                    <label class="form-label">Email:</label>
+                    <label class="form-label"><i class="fa-solid fa-envelope me-1"></i>Email:</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
 
+                <!-- Request type dropdown -->
                 <div class="mb-3">
-                    <label class="form-label">Request Type:</label>
+                    <label class="form-label"><i class="fa-solid fa-list me-1"></i>Request Type:</label>
                     <select name="request_type" class="form-select">
                         <option>Content update</option>
                         <option>Event/calendar update</option>
@@ -58,18 +65,21 @@
                     </select>
                 </div>
 
+                <!-- Page(s) involved field -->
                 <div class="mb-3">
-                    <label class="form-label">Page(s) Involved (url):</label>
+                    <label class="form-label"><i class="fa-solid fa-link me-1"></i>Page(s) Involved (url):</label>
                     <input type="text" name="page" class="form-control">
                 </div>
 
+                <!-- Description textarea -->
                 <div class="mb-3">
-                    <label class="form-label">Description:</label>
+                    <label class="form-label"><i class="fa-solid fa-align-left me-1"></i>Description:</label>
                     <textarea name="description" class="form-control" rows="4" required></textarea>
                 </div>
 
+                <!-- Urgency dropdown -->
                 <div class="mb-3">
-                    <label class="form-label">Urgency:</label>
+                    <label class="form-label"><i class="fa-solid fa-bolt me-1"></i>Urgency:</label>
                     <select name="urgency" class="form-select">
                         <option>Low</option>
                         <option>Medium</option>
@@ -77,11 +87,13 @@
                     </select>
                 </div>
 
+                <!-- File attachment field -->
                 <div class="mb-3">
-                    <label class="form-label">Attach File (optional):</label>
+                    <label class="form-label"><i class="fa-solid fa-paperclip me-1"></i>Attach File (optional):</label>
                     <input type="file" name="attachment" class="form-control">
                 </div>
 
+                <!-- Submit button with icon -->
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
                         <i class="fa-solid fa-paper-plane me-1"></i> Submit Request
