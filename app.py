@@ -7,11 +7,11 @@ from datetime import datetime
 # Initialize Flask app
 app = Flask(__name__)
 # Set secret key for session management and flash messages
-app.config['SECRET_KEY'] = env.SECRET_KEY
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret')
 # Set folder for file uploads
 app.config['UPLOAD_FOLDER'] = 'uploads'
 # Set database URI for SQLAlchemy (SQLite database)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///requests.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///requests.db')
 # Set maximum upload size (16MB)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
