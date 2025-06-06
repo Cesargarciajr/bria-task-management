@@ -12,116 +12,121 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/style.css') }}">
   </head>
   <body class="bg-light">
-    <div class="container py-3 py-md-5">
-      <!-- Logo section -->
-      <div class="text-center mb-4">
-        <img src="{{ url_for('static', filename='assets/media/bria-logo.jpg') }}" alt="Association Logo" class="bria-logo" height="100" width="200">
-      </div>
+    <div class="container-md py-3 py-md-5 mx-auto">
+    <!-- Logo section -->
+    <div class="text-center mb-4">
+        <img src="{{ url_for('static', filename='assets/media/bria-logo.jpg') }}" alt="Association Logo" class="bria-logo" style="max-width:200px; width:100%; height:auto;">
+    </div>
 
-      <div class="card shadow my-2">
-        <!-- Card header with icon and title -->
-        <div class="card-header bg-primary text-white">
-          <h4><i class="fa-solid fa-envelope-open-text me-2"></i>Submitted Website Requests</h4>
+    <!-- Centered and less wide card -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-7 col-xl-6">
+        <div class="card shadow my-2 my-md-4">
+            <!-- Card header with icon and title -->
+            <div class="card-header bg-primary text-white">
+            <h4><i class="fa-solid fa-envelope-open-text me-2"></i>Submitted Website Requests</h4>
+            </div>
+
+            <!-- Filter Form for status, urgency, and date -->
+            <form method="get" class="p-3">
+            <div class="row g-2 align-items-end">
+                <!-- Status filter -->
+                <div class="col-12 col-md-3">
+                <label class="form-label"><i class="fa-solid fa-filter"></i> Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="done" {% if request.args.get('status') == 'done' %}selected{% endif %}>Done</option>
+                </select>
+                </div>
+                <!-- Urgency filter -->
+                <div class="col-12 col-md-3">
+                <label class="form-label"><i class="fa-solid fa-bolt"></i> Urgency</label>
+                <select name="urgency" class="form-select">
+                    <option value="">All</option>
+                    <option value="Low" {% if request.args.get('urgency') == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if request.args.get('urgency') == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if request.args.get('urgency') == 'High' %}selected{% endif %}>High</option>
+                </select>
+                </div>
+                <!-- Date filter -->
+                <div class="col-12 col-md-3">
+                <label class="form-label"><i class="fa-solid fa-calendar-days"></i> Date</label>
+                <input type="date" name="date" class="form-control" value="{{ request.args.get('date', '') }}">
+                </div>
+                <!-- Filter button -->
+                <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary w-100 mt-2 mt-md-0"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
+                </div>
+            </div>
+            </form>
+
+            <!-- Responsive table for requests -->
+            <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white shadow-sm mt-2 align-middle">
+                <thead class="table-primary">
+                <tr>
+                    <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                    <th><i class="fa-solid fa-user"></i> Name</th>
+                    <th><i class="fa-solid fa-file-lines"></i> Type</th>
+                    <th><i class="fa-solid fa-bolt"></i> Urgency</th>
+                    <th><i class="fa-solid fa-calendar-days"></i> Submitted</th>
+                    <th><i class="fa-solid fa-flag"></i> Status</th>
+                    <th><i class="fa-solid fa-toggle-on"></i> Done</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if requests %}
+                    {% for req in requests %}
+                    <!-- Each request row, clickable for details -->
+                    <tr class="{% if req.completed %}table-success{% endif %}" style="cursor:pointer;" onclick="window.location='{{ url_for('request_details', request_id=req.id) }}'">
+                        <td>{{ req.id }}</td>
+                        <td>{{ req.name }}</td>
+                        <td>{{ req.request_type }}</td>
+                        <td>
+                        <!-- Urgency with icon and color -->
+                        {% if req.urgency == 'High' %}
+                            <span class="text-danger"><i class="fa-solid fa-circle-exclamation"></i> {{ req.urgency }}</span>
+                        {% elif req.urgency == 'Medium' %}
+                            <span class="text-warning"><i class="fa-solid fa-triangle-exclamation"></i> {{ req.urgency }}</span>
+                        {% else %}
+                            <span class="text-success"><i class="fa-solid fa-circle-check"></i> {{ req.urgency }}</span>
+                        {% endif %}
+                        </td>
+                        <td>
+                        <i class="fa-solid fa-calendar"></i>
+                        {{ req.submitted_at.strftime('%Y-%m-%d') }}
+                        </td>
+                        <td>
+                        <!-- Status with icon and color -->
+                        {% if req.completed %}
+                            <span class="text-success"><i class="fa-solid fa-check-circle"></i> Done</span>
+                        {% else %}
+                            <span class="text-warning"><i class="fa-solid fa-hourglass-half"></i> Pending</span>
+                        {% endif %}
+                        </td>
+                        <td>
+                        <!-- Done toggle button (does not trigger row click) -->
+                        <a href="{{ url_for('toggle_request', request_id=req.id) }}" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
+                            Done
+                        </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <!-- No requests found row -->
+                    <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        <i class="fa-solid fa-inbox"></i> No requests found.
+                    </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            </div>
         </div>
-
-        <!-- Filter Form for status, urgency, and date -->
-        <form method="get" class="p-3">
-          <div class="row g-2 align-items-end">
-            <!-- Status filter -->
-            <div class="col-12 col-md-3">
-              <label class="form-label"><i class="fa-solid fa-filter"></i> Status</label>
-              <select name="status" class="form-select">
-                <option value="">All</option>
-                <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>Pending</option>
-                <option value="done" {% if request.args.get('status') == 'done' %}selected{% endif %}>Done</option>
-              </select>
-            </div>
-            <!-- Urgency filter -->
-            <div class="col-12 col-md-3">
-              <label class="form-label"><i class="fa-solid fa-bolt"></i> Urgency</label>
-              <select name="urgency" class="form-select">
-                <option value="">All</option>
-                <option value="Low" {% if request.args.get('urgency') == 'Low' %}selected{% endif %}>Low</option>
-                <option value="Medium" {% if request.args.get('urgency') == 'Medium' %}selected{% endif %}>Medium</option>
-                <option value="High" {% if request.args.get('urgency') == 'High' %}selected{% endif %}>High</option>
-              </select>
-            </div>
-            <!-- Date filter -->
-            <div class="col-12 col-md-3">
-              <label class="form-label"><i class="fa-solid fa-calendar-days"></i> Date</label>
-              <input type="date" name="date" class="form-control" value="{{ request.args.get('date', '') }}">
-            </div>
-            <!-- Filter button -->
-            <div class="col-12 col-md-3">
-              <button type="submit" class="btn btn-primary w-100 mt-2 mt-md-0"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
-            </div>
-          </div>
-        </form>
-
-        <!-- Responsive table for requests -->
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover bg-white shadow-sm mt-2 align-middle">
-            <thead class="table-primary">
-              <tr>
-                <th><i class="fa-solid fa-hashtag"></i> ID</th>
-                <th><i class="fa-solid fa-user"></i> Name</th>
-                <th><i class="fa-solid fa-file-lines"></i> Type</th>
-                <th><i class="fa-solid fa-bolt"></i> Urgency</th>
-                <th><i class="fa-solid fa-calendar-days"></i> Submitted</th>
-                <th><i class="fa-solid fa-flag"></i> Status</th>
-                <th><i class="fa-solid fa-toggle-on"></i> Done</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% if requests %}
-                  {% for req in requests %}
-                  <!-- Each request row, clickable for details -->
-                  <tr class="{% if req.completed %}table-success{% endif %}" style="cursor:pointer;" onclick="window.location='{{ url_for('request_details', request_id=req.id) }}'">
-                      <td>{{ req.id }}</td>
-                      <td>{{ req.name }}</td>
-                      <td>{{ req.request_type }}</td>
-                      <td>
-                      <!-- Urgency with icon and color -->
-                      {% if req.urgency == 'High' %}
-                          <span class="text-danger"><i class="fa-solid fa-circle-exclamation"></i> {{ req.urgency }}</span>
-                      {% elif req.urgency == 'Medium' %}
-                          <span class="text-warning"><i class="fa-solid fa-triangle-exclamation"></i> {{ req.urgency }}</span>
-                      {% else %}
-                          <span class="text-success"><i class="fa-solid fa-circle-check"></i> {{ req.urgency }}</span>
-                      {% endif %}
-                      </td>
-                      <td>
-                      <i class="fa-solid fa-calendar"></i>
-                      {{ req.submitted_at.strftime('%Y-%m-%d') }}
-                      </td>
-                      <td>
-                      <!-- Status with icon and color -->
-                      {% if req.completed %}
-                          <span class="text-success"><i class="fa-solid fa-check-circle"></i> Done</span>
-                      {% else %}
-                          <span class="text-warning"><i class="fa-solid fa-hourglass-half"></i> Pending</span>
-                      {% endif %}
-                      </td>
-                      <td>
-                      <!-- Done toggle button (does not trigger row click) -->
-                      <a href="{{ url_for('toggle_request', request_id=req.id) }}" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();">
-                          Done
-                      </a>
-                      </td>
-                  </tr>
-                  {% endfor %}
-              {% else %}
-                  <!-- No requests found row -->
-                  <tr>
-                  <td colspan="7" class="text-center text-muted">
-                      <i class="fa-solid fa-inbox"></i> No requests found.
-                  </td>
-                  </tr>
-              {% endif %}
-            </tbody>
-          </table>
         </div>
-      </div>
+    </div>
     </div>
   </body>
 </html>
