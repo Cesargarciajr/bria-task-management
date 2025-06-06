@@ -90,7 +90,33 @@ def uploaded_file(filename):
 # Admin route to list all requests
 @app.route('/admin')
 def list_requests():
-    requests = WebsiteRequest.query.order_by(WebsiteRequest.id.desc()).all()
+    # Get filter values from query parameters
+    status = request.args.get('status')
+    urgency = request.args.get('urgency')
+    date = request.args.get('date')
+
+    # Start with all requests
+    query = WebsiteRequest.query
+
+    # Filter by status
+    if status == 'pending':
+        query = query.filter_by(completed=False)
+    elif status == 'done':
+        query = query.filter_by(completed=True)
+
+    # Filter by urgency
+    if urgency:
+        query = query.filter_by(urgency=urgency)
+
+    # Filter by date (submitted_at)
+    if date:
+        from datetime import datetime, timedelta
+        start = datetime.strptime(date, "%Y-%m-%d")
+        end = start + timedelta(days=1)
+        query = query.filter(WebsiteRequest.submitted_at >= start, WebsiteRequest.submitted_at < end)
+
+    # Order by most recent
+    requests = query.order_by(WebsiteRequest.id.desc()).all()
     return render_template('admin.html', requests=requests)
 
 # Route to toggle completion status
