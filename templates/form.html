@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Website Request Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <!-- Logo Placeholder -->
+    <div class="text-center mb-4">
+        <img src="{{ url_for('static', filename='assets/media/bria-logo.jpg') }}" alt="Association Logo" height="200">
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fa-solid fa-envelope-open-text me-2"></i>Website Update Request</h4>
+        </div>
+        <div class="card-body">
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="alert alert-success">
+                    {% for message in messages %}
+                        <div>{{ message }}</div>
+                    {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form action="/submit" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Name:</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email:</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Request Type:</label>
+                    <select name="request_type" class="form-select">
+                        <option>Content update</option>
+                        <option>Event/calendar update</option>
+                        <option>New content/page</option>
+                        <option>Bug report</option>
+                        <option>Suggestion/idea</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Page(s) Involved (url):</label>
+                    <input type="text" name="page" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description:</label>
+                    <textarea name="description" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Urgency:</label>
+                    <select name="urgency" class="form-select">
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Attach File (optional):</label>
+                    <input type="file" name="attachment" class="form-control">
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-paper-plane me-1"></i> Submit Request
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (optional, for future dynamic elements) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
